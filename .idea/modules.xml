@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/main.py.iml" filepath="$PROJECT_DIR$/.idea/main.py.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/fishinator-bachelor.iml" filepath="$PROJECT_DIR$/.idea/fishinator-bachelor.iml" />
     </modules>
   </component>
 </project>

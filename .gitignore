@@ -1,2 +1,15 @@
+# Virtual environment
+.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Data (large / reproducible)
 data/raw/
-*.csv
+data/processed/
+
+# OS
+.DS_Store
+Thumbs.db
