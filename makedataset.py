@@ -6,12 +6,12 @@ from src.feature_engineering import build_segment_features
 # 1. LOAD DATA
 # =====================================================
 
-ais = pd.read_csv("data/raw/AIS_2024_11_14.csv")
+ais = pd.read_csv("data/raw/ais2024.csv")
 ais["BaseDateTime"] = pd.to_datetime(ais["BaseDateTime"])
 ais = ais.sort_values(["MMSI", "BaseDateTime"])
 ais["date"] = ais["BaseDateTime"].dt.date
 
-gfw = pd.read_csv("data/raw/mmsi-daily-csvs-10-v3-2024-11-14.csv")
+gfw = pd.read_csv("data/raw/gfw.csv")
 
 gfw = gfw.rename(columns={
     "mmsi": "MMSI",

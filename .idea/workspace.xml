@@ -2,22 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a2cca524-a791-4652-bb8b-97db70397c87" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/fishinator-bachelor.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/makedataset.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/fishinator.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/strong_labels.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/weak_labels.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/raw/mmsi-daily-csvs-10-v3-2024-11-14.csv" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/baseline.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/baseline.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/makedataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/makedataset.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/baseline.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data_loading.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/evaluation.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/evaluation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/feature_engineering.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/feature_engineering.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/preprocessing.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/segmentation.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,7 +51,8 @@
     "ai.playground.ignore.import.keys.banner.in.settings": "true",
     "git-widget-placeholder": "main",
     "last_opened_file_path": "D:/skole/bachelor/project/fishinator-bachelor/data/raw",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "reference.settingsdialog.IDE.editor.colors.Python",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -82,7 +78,11 @@
       <updated>1772197490741</updated>
       <workItem from="1772197492267" duration="220000" />
       <workItem from="1772197906356" duration="17000" />
-      <workItem from="1772198004677" duration="3253000" />
+      <workItem from="1772198004677" duration="3404000" />
+      <workItem from="1775818239481" duration="2354000" />
+      <workItem from="1776152272226" duration="31000" />
+      <workItem from="1776285198131" duration="8697000" />
+      <workItem from="1776342677245" duration="445000" />
     </task>
     <servers />
   </component>
@@ -91,6 +91,6 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/fishinator_bachelor$makedataset.coverage" NAME="makedataset Coverage Results" MODIFIED="1772199500073" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/fishinator_bachelor$main.coverage" NAME="main Coverage Results" MODIFIED="1772200809321" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/fishinator_bachelor$main.coverage" NAME="main Coverage Results" MODIFIED="1776296208675" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

@@ -1,25 +1,21 @@
 from sklearn.linear_model import LogisticRegression
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+import numpy as np
 
-def train_logistic_regression(train_data, features):
-    model = make_pipeline(
-        StandardScaler(),
-        LogisticRegression(max_iter=1000, class_weight="balanced")
-    )
-
-    model.fit(
-        train_data[features],
-        train_data["label"]
-    )
+def train_logreg(X, y):
+    model = LogisticRegression(max_iter=1000)
+    model.fit(X, y)
     return model
 
-def train_random_forest(train_data, features):
-    model = RandomForestClassifier(
-        n_estimators=200,
-        class_weight="balanced",
-        random_state=42
-    )
-    model.fit(train_data[features], train_data["label"])
+def train_rf(X, y):
+    model = RandomForestClassifier(n_estimators=100, random_state=42)
+    model.fit(X, y)
     return model
+
+def train_gb(X, y):
+    model = GradientBoostingClassifier(random_state=42)
+    model.fit(X, y)
+    return model
+
+def baseline_model(X, y):
+    return (X["mean_speed"] < 5).astype(int)
