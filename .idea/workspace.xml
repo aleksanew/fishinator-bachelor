@@ -2,17 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a2cca524-a791-4652-bb8b-97db70397c87" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/strong_labels.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/weak_labels.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/experiments/train_models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/raw/mmsi-daily-csvs-10-v3-2024-11-14.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/makedataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/makedataset.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/baseline.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/data_loading.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/evaluation.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/evaluation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/feature_engineering.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/feature_engineering.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/preprocessing.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/segmentation.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,6 +35,7 @@
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "Python.main.executor": "Run",
     "Python.makedataset.executor": "Run",
+    "Python.train_models.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
@@ -82,7 +75,8 @@
       <workItem from="1775818239481" duration="2354000" />
       <workItem from="1776152272226" duration="31000" />
       <workItem from="1776285198131" duration="8697000" />
-      <workItem from="1776342677245" duration="445000" />
+      <workItem from="1776342677245" duration="1707000" />
+      <workItem from="1776632937356" duration="4493000" />
     </task>
     <servers />
   </component>
@@ -91,6 +85,7 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/fishinator_bachelor$makedataset.coverage" NAME="makedataset Coverage Results" MODIFIED="1772199500073" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/fishinator_bachelor$train_models.coverage" NAME="train_models Coverage Results" MODIFIED="1776636545607" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/experiments" />
     <SUITE FILE_PATH="coverage/fishinator_bachelor$main.coverage" NAME="main Coverage Results" MODIFIED="1776296208675" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
