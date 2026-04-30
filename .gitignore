@@ -13,3 +13,4 @@ data/processed/
 # OS
 .DS_Store
 Thumbs.db
+NNs/data/
