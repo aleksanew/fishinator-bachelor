@@ -99,7 +99,7 @@ class TokenManager:
         return self._token
 
     def _refresh(self):
-        log.info("Fetching new access token …")
+        log.info(f"Fetching new access token …")
         resp = requests.post(
             TOKEN_URL,
             data={
@@ -118,7 +118,7 @@ class TokenManager:
 
     @property
     def headers(self) -> dict:
-        return {"Authorization": f"Bearer {self.get_token()}"}
+        return {"Authorization": f"bearer {self.get_token()}"}
 
 
 # =============================================================================

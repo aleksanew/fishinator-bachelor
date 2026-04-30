@@ -45,7 +45,7 @@ AIS_PATH  = "data/raw/ais2024.csv"
 GFW_PATH  = "data/raw/gfw.csv"
 
 SEQ_LENGTH     = SEQ_LEN   # 60 time-steps per window
-TOP_K          = 8         # how many point-level features to keep
+TOP_K          = 9         # how many point-level features to keep
 TEST_SIZE      = 0.20      # fraction of vessels held out
 RANDOM_SEED    = 42
 EPOCHS         = 30

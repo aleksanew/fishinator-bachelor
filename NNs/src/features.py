@@ -121,6 +121,7 @@ def compute_point_features(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+
 # ---------------------------------------------------------------------------
 # 3.  Feature selection  (point-level MI → controls model input)
 # ---------------------------------------------------------------------------
@@ -208,6 +209,15 @@ def build_sequences(
     mmsi_ids  : np.ndarray  (N,)   MMSI for each window
     """
     all_seqs, all_mmsi = [], []
+
+    MIN_PINGS = 30 # require at least half a sequence window worth of real data
+
+    ping_counts = df.groupby("MMSI").size()
+    valid_mmsi   = ping_counts[ping_counts >= MIN_PINGS].index
+    df = df[df["MMSI"].isin(valid_mmsi)]
+
+    print(f"Vessels after min-ping filter: {df['MMSI'].nunique()} "
+      f"(dropped {(ping_counts < MIN_PINGS).sum()} with < {MIN_PINGS} pings)")
 
     for mmsi, group in df.groupby("MMSI"):
         group = group.sort_values("BaseDateTime")
