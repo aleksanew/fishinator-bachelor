@@ -172,25 +172,34 @@ def parse_track_response(mmsi: int, data: list) -> list[dict]:
     Convert a list of AIS position dicts (Barentswatch format) into
     normalised rows matching the pipeline's expected columns.
     """
+    def _first(*keys, src=None):
+        for k in keys:
+            v = src.get(k)
+            if v is not None:
+                return v
+        return None
+
     rows = []
     for pt in data:
-        lat = pt.get("latitude")  or pt.get("lat")
-        lon = pt.get("longitude") or pt.get("lon")
-        sog = pt.get("speedOverGround") or pt.get("sog")
-        cog = pt.get("courseOverGround") or pt.get("cog")
-        ts  = pt.get("msgtime") or pt.get("time") or pt.get("timestamp")
+        lat = _first("latitude", "lat", src=pt)
+        lon = _first("longitude", "lon", src=pt)
+        sog = _first("speedOverGround", "sog", src=pt)
+        cog = _first("courseOverGround", "cog", src=pt)
+        ts  = _first("msgtime", "time", "timestamp", src=pt)
 
-        # Skip points missing essential fields
         if any(v is None for v in [lat, lon, ts]):
             continue
+
+        # Normalise timestamp to naive UTC (strip +00:00) for pipeline consistency
+        ts = str(ts).replace("+00:00", "").replace("Z", "")
 
         rows.append({
             "MMSI":         mmsi,
             "BaseDateTime": ts,
             "LAT":          lat,
             "LON":          lon,
-            "SOG":          sog if sog is not None else "",
-            "COG":          cog if cog is not None else "",
+            "SOG":          "" if sog is None else sog,
+            "COG":          "" if cog is None else cog,
         })
     return rows
 
@@ -205,17 +214,19 @@ def collect_historic(
     from_date: datetime,
     to_date:   datetime,
     progress_path: Path = None,
+    output_path: Path = None,
 ) -> list[dict]:
     """
     Fetch historic tracks for a list of MMSIs between two dates.
     Requests are made one vessel at a time (per Barentswatch guidance).
     Pass progress_path to skip already-fetched MMSIs on resume.
+    Pass output_path to write rows to disk per-MMSI (avoids MemoryError on large runs).
     """
     from_str = from_date.strftime("%Y-%m-%dT%H:%M:%S")
     to_str   = to_date.strftime("%Y-%m-%dT%H:%M:%S")
 
     done     = load_progress(progress_path) if progress_path else set()
-    all_rows = []
+    all_rows = [] if output_path is None else None
     total    = len(mmsi_list)
     skipped  = 0
 
@@ -237,7 +248,12 @@ def collect_historic(
                 rows = parse_track_response(mmsi, data.get("positions", []))
 
             log.info("  → %d positions", len(rows))
-            all_rows.extend(rows)
+
+            if output_path is not None:
+                if rows:
+                    _append_rows(rows, output_path)
+            else:
+                all_rows.extend(rows)
 
             if progress_path:
                 mark_done(progress_path, mmsi)
@@ -250,7 +266,7 @@ def collect_historic(
     if skipped:
         log.info("Skipped %d already-fetched MMSIs", skipped)
 
-    return all_rows
+    return all_rows or []
 
 
 def collect_last24h(
@@ -330,6 +346,19 @@ def collect_live(token_mgr: TokenManager) -> list[dict]:
 # Save to CSV  –  merge with any existing file and deduplicate
 # =============================================================================
 
+def _append_rows(rows: list[dict], path: Path):
+    """Append rows to a CSV, writing the header only if the file is new."""
+    import csv
+    fieldnames = ["MMSI", "BaseDateTime", "LAT", "LON", "SOG", "COG"]
+    write_header = not path.exists()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "a", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        if write_header:
+            writer.writeheader()
+        writer.writerows(rows)
+
+
 def save_csv(rows: list[dict], path: Path):
     import csv
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -363,6 +392,38 @@ def save_csv(rows: list[dict], path: Path):
         "Saved %d total rows (%d new, %d already existed) → %s",
         len(all_rows), new_count, len(existing), path,
     )
+
+
+def clean_csv_to_progress(output_path: Path, progress_path: Path):
+    """
+    Remove rows from the CSV for any MMSI not yet in the progress file.
+
+    Guards against the edge case where _append_rows wrote rows for an MMSI
+    but the process exited before mark_done ran. On restart those MMSIs will
+    be re-fetched, so their orphaned rows must be removed first to avoid duplicates.
+    """
+    if not output_path.exists():
+        return
+    done = load_progress(progress_path)
+    if not done:
+        return
+
+    import csv
+    fieldnames = ["MMSI", "BaseDateTime", "LAT", "LON", "SOG", "COG"]
+
+    with open(output_path, newline="", encoding="utf-8") as f:
+        rows = list(csv.DictReader(f))
+
+    clean_rows = [r for r in rows if int(r["MMSI"]) in done]
+    removed = len(rows) - len(clean_rows)
+    if removed == 0:
+        return
+
+    log.info("Removed %d orphaned rows from %s (MMSI not yet in progress file)", removed, output_path)
+    with open(output_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(clean_rows)
 
 
 # =============================================================================
@@ -574,9 +635,9 @@ def main():
                 to_date.strftime("%Y-%m-%d"),
             )
 
-        rows = collect_historic(token_mgr, mmsi_list, from_date, to_date,
-                                progress_path=progress_path)
-        save_csv(rows, output)
+        clean_csv_to_progress(output, progress_path)
+        collect_historic(token_mgr, mmsi_list, from_date, to_date,
+                         progress_path=progress_path, output_path=output)
 
         done_count = len(load_progress(progress_path))
         remaining  = len(mmsi_list) - done_count
