@@ -48,51 +48,60 @@ class FishingSequenceDataset(Dataset):
 
 class CNN1D(nn.Module):
     """
-    Three stacked Conv1D blocks with residual-style skip connections,
-    followed by global average pooling and an MLP head.
+    Three parallel Conv1D branches (k=3, 7, 11) capture fishing patterns at
+    multiple temporal scales. Outputs are fused with a k=1 conv, then both
+    global average and max pooling are concatenated before the MLP head.
 
-    Architecture (with default params):
-      Conv1d(F, 64, k=3) → BN → ReLU → Dropout
-      Conv1d(64, 128, k=3) → BN → ReLU → Dropout
-      Conv1d(128, 64, k=3) → BN → ReLU
-      GlobalAvgPool → Linear(64→32) → ReLU → Linear(32→1)
+    Architecture:
+      branch_3:  Conv1d(F→32, k=3,  pad=1) → BN → ReLU
+      branch_7:  Conv1d(F→32, k=7,  pad=3) → BN → ReLU
+      branch_11: Conv1d(F→32, k=11, pad=5) → BN → ReLU
+      cat → (batch, 96, T)
+      fusion: Conv1d(96→64, k=1) → BN → ReLU → Dropout
+      GAP + GMP → cat → (batch, 128)
+      head: Linear(128→64) → ReLU → Dropout → Linear(64→1)
     """
 
-    def __init__(self, n_features: int, seq_len: int,
-                 channels: tuple = (64, 128, 64),
-                 kernel_size: int = 3,
-                 dropout: float = 0.3):
+    def __init__(self, n_features: int, seq_len: int, dropout: float = 0.3):
         super().__init__()
 
-        layers = []
-        in_ch = n_features
-        for out_ch in channels:
-            layers += [
-                nn.Conv1d(in_ch, out_ch, kernel_size=kernel_size, padding=kernel_size // 2),
-                nn.BatchNorm1d(out_ch),
+        def _branch(k):
+            return nn.Sequential(
+                nn.Conv1d(n_features, 32, kernel_size=k, padding=k // 2),
+                nn.BatchNorm1d(32),
                 nn.ReLU(),
-                nn.Dropout(dropout),
-            ]
-            in_ch = out_ch
+            )
 
-        self.conv_blocks = nn.Sequential(*layers)
+        self.branch_3  = _branch(3)
+        self.branch_7  = _branch(7)
+        self.branch_11 = _branch(11)
 
-        # Global average pool → output is (batch, in_ch)
-        self.gap = nn.AdaptiveAvgPool1d(1)
-
-        self.head = nn.Sequential(
-            nn.Linear(in_ch, 32),
+        # k=1 conv to compress 3×32=96 channels down to 64 before pooling
+        self.fusion = nn.Sequential(
+            nn.Conv1d(96, 64, kernel_size=1),
+            nn.BatchNorm1d(64),
             nn.ReLU(),
             nn.Dropout(dropout),
-            nn.Linear(32, 1),
+        )
+
+        self.gap = nn.AdaptiveAvgPool1d(1)  # average across time → (batch, 64)
+        self.gmp = nn.AdaptiveMaxPool1d(1)  # peak across time   → (batch, 64)
+
+        self.head = nn.Sequential(
+            nn.Linear(128, 64),  # 128 = 64 (GAP) + 64 (GMP)
+            nn.ReLU(),
+            nn.Dropout(dropout),
+            nn.Linear(64, 1),
         )
 
     def forward(self, x):
-        # x: (batch, T, F) → permute to (batch, F, T) for Conv1d
+        # x: (batch, T, F) → (batch, F, T) for Conv1d
         x = x.permute(0, 2, 1)
-        x = self.conv_blocks(x)       # (batch, C_last, T)
-        x = self.gap(x).squeeze(-1)   # (batch, C_last)
-        return self.head(x).squeeze(-1)  # (batch,)
+        x = torch.cat([self.branch_3(x), self.branch_7(x), self.branch_11(x)], dim=1)
+        x = self.fusion(x)                                         # (batch, 64, T)
+        x = torch.cat([self.gap(x).squeeze(-1),
+                        self.gmp(x).squeeze(-1)], dim=-1)          # (batch, 128)
+        return self.head(x).squeeze(-1)                            # (batch,)
 
 
 # ---------------------------------------------------------------------------
