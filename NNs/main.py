@@ -51,6 +51,7 @@ RANDOM_SEED    = 42
 EPOCHS         = 30
 BATCH_SIZE     = 64
 LEARNING_RATE  = 1e-3
+VAL_FRACTION   = 0.15   # fraction of train sequences held out for val / early stopping
 DEVICE = "cuda"
 
 MODELS_TO_RUN  = ["cnn", "forward_rnn", "bi_rnn"]
@@ -184,18 +185,21 @@ for model_name in MODELS_TO_RUN:
     n_params = sum(p.numel() for p in model.parameters())
     print(f"  Parameters: {n_params:,}")
 
-    train_model(
+    history = train_model(
         model,
-        X_train    = seq_train_s,
-        y_train    = y_train,
-        epochs     = EPOCHS,
-        batch_size = BATCH_SIZE,
-        lr         = LEARNING_RATE,
-        device     = DEVICE,
-        verbose    = True,
+        X_train      = seq_train_s,
+        y_train      = y_train,
+        epochs       = EPOCHS,
+        batch_size   = BATCH_SIZE,
+        lr           = LEARNING_RATE,
+        device       = DEVICE,
+        verbose      = True,
+        val_fraction = VAL_FRACTION,
+        patience     = 5,
     )
 
-    y_prob, y_pred = predict(model, seq_test_s, device=DEVICE)
+    best_thr = history.get("best_threshold", 0.5)
+    y_prob, y_pred = predict(model, seq_test_s, device=DEVICE, threshold=best_thr)
     results = evaluate(y_test, y_pred, y_prob, model_name=model_name)
     all_results.append(results)
 

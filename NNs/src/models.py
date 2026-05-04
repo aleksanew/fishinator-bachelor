@@ -128,6 +128,9 @@ class ForwardRNN(nn.Module):
             bidirectional = False,
         )
 
+        # Learned query vector: scores each timestep's relevance for fishing detection
+        self.attn_query = nn.Parameter(torch.randn(hidden_size))
+
         self.head = nn.Sequential(
             nn.Linear(hidden_size, 32),
             nn.ReLU(),
@@ -137,9 +140,12 @@ class ForwardRNN(nn.Module):
 
     def forward(self, x):
         # x: (batch, T, F)
-        _, h_n = self.gru(x)          # h_n: (num_layers, batch, hidden)
-        last_h = h_n[-1]              # (batch, hidden)
-        return self.head(last_h).squeeze(-1)  # (batch,)
+        out, _ = self.gru(x)                                        # (batch, T, hidden)
+        scores  = out @ self.attn_query                             # (batch, T)
+        scores  = scores / (self.gru.hidden_size ** 0.5)            # scale
+        weights = torch.softmax(scores, dim=1)                      # (batch, T)
+        context = (weights.unsqueeze(-1) * out).sum(dim=1)          # (batch, hidden)
+        return self.head(context).squeeze(-1)                       # (batch,)
 
 
 # ---------------------------------------------------------------------------
@@ -166,6 +172,10 @@ class BiRNN(nn.Module):
             bidirectional = True,
         )
 
+        # Each timestep in `out` already encodes both past and future context
+        # (forward + backward GRU), making it a rich signal for attention to score.
+        self.attn_query = nn.Parameter(torch.randn(2 * hidden_size))
+
         # Concatenated forward + backward → 2 * hidden_size
         self.head = nn.Sequential(
             nn.Linear(2 * hidden_size, 64),
@@ -176,11 +186,12 @@ class BiRNN(nn.Module):
 
     def forward(self, x):
         # x: (batch, T, F)
-        _, h_n = self.gru(x)
-        # h_n: (num_layers * 2, batch, hidden)
-        # Last layer: forward = h_n[-2], backward = h_n[-1]
-        last_h = torch.cat([h_n[-2], h_n[-1]], dim=-1)  # (batch, 2*hidden)
-        return self.head(last_h).squeeze(-1)             # (batch,)
+        out, _ = self.gru(x)                                        # (batch, T, 2*hidden)
+        scores  = out @ self.attn_query                             # (batch, T)
+        scores  = scores / ((2 * self.gru.hidden_size) ** 0.5)     # scale
+        weights = torch.softmax(scores, dim=1)                      # (batch, T)
+        context = (weights.unsqueeze(-1) * out).sum(dim=1)          # (batch, 2*hidden)
+        return self.head(context).squeeze(-1)                       # (batch,)
 
 
 # ---------------------------------------------------------------------------
