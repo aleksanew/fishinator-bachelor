@@ -210,9 +210,9 @@ for model_name in MODELS_TO_RUN:
 print("\n" + "=" * 62)
 print("SUMMARY")
 print(f"  Features used ({N_FEATURES}): {selected_features}")
-print("=" * 62)
-print(f"{'Model':<15} {'Accuracy':>9} {'Precision':>10} {'Recall':>8} {'F1':>8} {'AUC':>8}")
-print("-" * 62)
+print("=" * 72)
+print(f"{'Model':<15} {'Accuracy':>9} {'Precision':>10} {'Recall':>8} {'F1':>8} {'AUC':>8} {'AP':>8}")
+print("-" * 72)
 for r in all_results:
     print(
         f"{r['model']:<15} "
@@ -220,6 +220,7 @@ for r in all_results:
         f"{r['precision']:>10.4f} "
         f"{r['recall']:>8.4f} "
         f"{r['f1']:>8.4f} "
-        f"{r['roc_auc']:>8.4f}"
+        f"{r['roc_auc']:>8.4f} "
+        f"{r['avg_prec']:>8.4f}"
     )
-print("=" * 62)
+print("=" * 72)

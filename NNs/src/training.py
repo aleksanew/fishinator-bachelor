@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader, WeightedRandomSampler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import (
     accuracy_score, precision_score, recall_score,
-    f1_score, roc_auc_score, confusion_matrix,
+    f1_score, roc_auc_score, average_precision_score, confusion_matrix,
 )
 
 from src.models import FishingSequenceDataset
@@ -210,8 +210,10 @@ def evaluate(y_true: np.ndarray, y_pred: np.ndarray,
     f1   = f1_score(y_true, y_pred, zero_division=0)
     try:
         auc = roc_auc_score(y_true, y_prob)
+        ap  = average_precision_score(y_true, y_prob)
     except ValueError:
         auc = float("nan")
+        ap  = float("nan")
 
     cm = confusion_matrix(y_true, y_pred)
 
@@ -222,6 +224,7 @@ def evaluate(y_true: np.ndarray, y_pred: np.ndarray,
     print(f"  Recall    : {rec:.4f}")
     print(f"  F1 Score  : {f1:.4f}")
     print(f"  ROC-AUC   : {auc:.4f}")
+    print(f"  Avg Prec  : {ap:.4f}")
     print(f"  Confusion Matrix:\n{cm}")
 
     return {
@@ -231,5 +234,6 @@ def evaluate(y_true: np.ndarray, y_pred: np.ndarray,
         "recall":    rec,
         "f1":        f1,
         "roc_auc":   auc,
+        "avg_prec":  ap,
         "confusion_matrix": cm.tolist(),
     }
