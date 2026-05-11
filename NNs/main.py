@@ -159,6 +159,14 @@ print(f"  Test  windows: {len(seq_test):>7,}  "
       f"(fishing={y_test.sum():,} | non-fishing={(y_test==0).sum():,})")
 print(f"  Input shape per window: ({SEQ_LENGTH}, {N_FEATURES})")
 
+total_windows    = len(y_test)
+positive_windows = int(y_test.sum())
+positive_rate    = positive_windows / total_windows if total_windows > 0 else float("nan")
+print(f"\n  Test set summary:")
+print(f"    Total windows   : {total_windows:,}")
+print(f"    Positive windows: {positive_windows:,}  ({positive_rate:.2%})")
+print(f"    Negative windows: {total_windows - positive_windows:,}  ({1 - positive_rate:.2%})")
+
 
 # =============================================================================
 # 7.  NORMALISE
