@@ -16,3 +16,4 @@ Thumbs.db
 *.csv
 NNs/data/raw.zip
 .claude/settings.local.json
+REPORT_OVERVIEW.md
