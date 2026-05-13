@@ -1,7 +1,6 @@
 """
 features_seq.py
-Point-level feature computation and sequence windowing for NN models.
-Uses only: mmsi, timestamp, lat, lon, speed, course  (lowercase schema).
+
 """
 
 import numpy as np
@@ -39,10 +38,7 @@ CANDIDATE_FEATURES = [
 # ---------------------------------------------------------------------------
 
 def compute_point_features(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Add point-level features to AIS dataframe.
-    Input must have: mmsi, timestamp, lat, lon, speed, course.
-    """
+
     df = df.copy().sort_values(["mmsi", "timestamp"]).reset_index(drop=True)
 
     # Sentinel replacement
@@ -108,10 +104,7 @@ def select_features(
     top_k: int = 8,
     verbose: bool = True,
 ) -> list:
-    """
-    Rank candidate point-level features by mutual information with vessel labels.
-    vessel_labels: Series indexed by mmsi with values {0, 1}.
-    """
+
     ping_labels = df["mmsi"].map(vessel_labels)
     valid       = ping_labels.notna()
 
@@ -140,12 +133,7 @@ def build_sequences(
     seq_len: int = SEQ_LEN,
     min_pings: int = 30,
 ) -> tuple:
-    """
-    Slide a fixed-length window over each vessel's sorted track.
-    Returns (sequences, mmsi_ids):
-        sequences : np.ndarray (N, seq_len, n_features)  float32
-        mmsi_ids  : np.ndarray (N,)
-    """
+
     ping_counts = df.groupby("mmsi").size()
     valid_mmsi  = ping_counts[ping_counts >= min_pings].index
     df = df[df["mmsi"].isin(valid_mmsi)].copy()
