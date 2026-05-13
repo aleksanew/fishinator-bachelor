@@ -1,7 +1,6 @@
 """
 data_loading.py
-Loaders for all four data sources. All outputs use a consistent
-lowercase column schema: mmsi, timestamp, lat, lon, speed, course.
+
 """
 
 import re
