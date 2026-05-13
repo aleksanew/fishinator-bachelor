@@ -1,8 +1,6 @@
 """
 evaluation.py
-Unified evaluation utilities used across all three experiments.
-Primary metric: Average Precision (PR-AUC).
-Secondary metrics: best-threshold F1, Precision, Recall.
+
 """
 
 import numpy as np
@@ -84,9 +82,7 @@ def evaluate_model(
 # ---------------------------------------------------------------------------
 
 def plot_pr_curves(results: list, title: str, save_path: str):
-    """
-    results: list of dicts from evaluate_model()
-    """
+
     plt.figure(figsize=(8, 6))
 
     pos_rate = results[0]["y_true"].mean()
