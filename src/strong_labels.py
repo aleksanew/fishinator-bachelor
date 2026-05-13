@@ -1,16 +1,5 @@
 """
 strong_labels.py
-Label AIS points and segments using BarentsWatch gear deployment data.
-
-Labeling logic — MMSI match + temporal match are always required.
-Spatial match is applied only when gear coordinates are available,
-using a generous radius since vessels often move away from gear while it soaks.
-
-Two labeling strategies are supported:
-  - "spatial": vessel must be within MAX_DIST_KM of gear (strict)
-  - "temporal": any point within the deployment window counts (lenient)
-The default is "temporal" because with only 100 overlapping vessels,
-the spatial filter reduces fishing segments to ~133 which is too few.
 """
 
 import numpy as np
@@ -49,17 +38,7 @@ def label_ais_points(
     max_dist_km: float = MAX_DIST_KM,
     strategy: str = STRATEGY,
 ) -> pd.DataFrame:
-    """
-    Label each AIS point as fishing (1) or not (0).
 
-    strategy="temporal": label all points within the gear deployment window.
-        Rationale: if a vessel registered gear, it was fishing during that period.
-        Simple and maximises the number of labeled positive points.
-
-    strategy="spatial": additionally require the vessel to be within
-        max_dist_km of the gear coordinates.
-        More precise but misses vessels that moved away while gear soaks.
-    """
     ais_df = ais_df.copy()
     ais_df["fishing"] = 0
 
@@ -119,14 +98,7 @@ def aggregate_segments(
     ais_df: pd.DataFrame,
     min_fishing_ratio: float = MIN_FISHING_RATIO,
 ) -> pd.DataFrame:
-    """
-    Aggregate point-level fishing labels to segment level.
 
-    Labels:
-      1 (fishing)     — >= min_fishing_ratio of points are labeled fishing
-      0 (non-fishing) — 0 points labeled fishing
-      -1 (ambiguous)  — between 0 and min_fishing_ratio, excluded
-    """
     agg = (
         ais_df.groupby(["mmsi", "segment_id"])["fishing"]
               .mean()
@@ -160,10 +132,7 @@ def assign_strong_labels_vessel_level(
     max_dist_km: float = MAX_DIST_KM,
     strategy: str = STRATEGY,
 ) -> pd.Series:
-    """
-    Assign strong labels at vessel level for NN sequence models.
-    A vessel is labeled 1 if ANY of its AIS points pass the labeling filter.
-    """
+
     labeled = label_ais_points(ais_df, bw_df,
                                max_dist_km=max_dist_km, strategy=strategy)
     return (
