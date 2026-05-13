@@ -1,8 +1,6 @@
 """
 models_classical.py
-Classical ML model definitions: Logistic Regression, Random Forest,
-Gradient Boosting. All use the improved hyperparameters and class
-imbalance handling discussed in the thesis.
+
 """
 
 from sklearn.linear_model import LogisticRegression
@@ -45,7 +43,6 @@ def make_gb():
 
 
 def fit_classical(model, X_train, y_train):
-    """Fit a classical model, applying sample weights for GB."""
     if isinstance(model, GradientBoostingClassifier):
         weights = compute_sample_weight("balanced", y_train)
         model.fit(X_train, y_train, sample_weight=weights)
@@ -55,7 +52,6 @@ def fit_classical(model, X_train, y_train):
 
 
 def baseline_predict(X_df):
-    """Rule-based baseline: slow speed AND high turning rate."""
     return (
         (X_df["mean_speed"] < 5) &
         (X_df["turning_rate"] > 10)
