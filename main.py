@@ -1,28 +1,6 @@
 """
 main.py
-=======
-Unified fishing detection pipeline.
 
-Three experiments (Teodor's structure):
-  A) Train STRONG → Validate STRONG → Test STRONG   (upper bound with real labels)
-  B) Train STRONG → Validate STRONG → Test WEAK     (do Norwegian patterns generalize?)
-  C) Train WEAK   → Validate WEAK   → Test WEAK     (can weak labels substitute?)
-
-Experiments A and B share the same trained models — the strong-trained models
-are evaluated on both strong and weak test sets, directly answering whether
-fishing behavior is universal or region-specific.
-
-Classical models (LogReg, RF, GB) use segment-level feature vectors.
-Neural networks (CNN1D, ForwardRNN, BiRNN) use raw AIS point sequences.
-
-Usage:
-    python main.py
-
-Data paths (edit CONFIG below):
-    AIS 2024        data/raw/ais2024.csv           (US waters, weak label set)
-    GFW             data/raw/gfw.csv               (weak label source)
-    AIS historic    data/raw/bw_ais_historic.csv   (Norwegian waters, strong label set)
-    BarentsWatch    data/raw/barentswatch.csv       (strong label source)
 """
 
 import os
@@ -312,7 +290,7 @@ def results_to_df(results, experiment):
     } for r in results])
 
 # =============================================================================
-# EXPERIMENT A: Train STRONG → Test STRONG  (upper bound)
+# EXPERIMENT A: Train STRONG → Test STRONG
 # =============================================================================
 
 print("\n" + "=" * 65)
@@ -340,8 +318,6 @@ save_plots(results_A, "A", "Train Strong / Test Strong")
 
 # =============================================================================
 # EXPERIMENT B: Train STRONG → Test WEAK
-# Key question: do Norwegian patterns generalize to global/US vessels?
-# Uses the same strong-trained models from A — no retraining for classical.
 # =============================================================================
 
 print("\n" + "=" * 65)
@@ -391,7 +367,6 @@ save_plots(results_B, "B", "Train Strong / Test Weak")
 
 # =============================================================================
 # EXPERIMENT C: Train WEAK → Validate WEAK → Test WEAK  (GroupKFold CV)
-# Can cheap GFW-derived labels produce a working classifier?
 # =============================================================================
 
 print("\n" + "=" * 65)
