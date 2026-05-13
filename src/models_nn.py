@@ -1,12 +1,6 @@
 """
 models_nn.py
-PyTorch neural network architectures for fishing vessel detection.
-  - CNN1D       : multi-scale 1D convolutional network
-  - ForwardRNN  : unidirectional GRU
-  - BiRNN       : bidirectional GRU
-All models:
-  Input  (batch, seq_len, n_features)
-  Output (batch,)  raw logit — use BCEWithLogitsLoss
+
 """
 
 import numpy as np
@@ -37,10 +31,6 @@ class FishingDataset(Dataset):
 # ---------------------------------------------------------------------------
 
 class CNN1D(nn.Module):
-    """
-    Three parallel Conv1D branches (k=3, 7, 11) fused with k=1 conv,
-    then global average + max pooling concatenated before MLP head.
-    """
 
     def __init__(self, n_features: int, seq_len: int, dropout: float = 0.3):
         super().__init__()
