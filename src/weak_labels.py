@@ -33,8 +33,8 @@ def assign_weak_labels_vessel_level(
 
     gfw_positive = set(
         zip(
-            np.floor(gfw_df.loc[gfw_df["fishing_hours"] > 0, "lat_bin"] * 10) / 10,
-            np.floor(gfw_df.loc[gfw_df["fishing_hours"] > 0, "lon_bin"] * 10) / 10,
+            gfw_df.loc[gfw_df["fishing_hours"] > 0, "lat_bin"],
+            gfw_df.loc[gfw_df["fishing_hours"] > 0, "lon_bin"],
         )
     )
 

@@ -67,7 +67,7 @@ def compute_point_features(df: pd.DataFrame) -> pd.DataFrame:
     # Speed flags
     df["is_stopped"]       = (df["sog"] <= STOPPED_KN).astype(np.float32)
     df["is_fishing_speed"] = (
-        (df["sog"] > STOPPED_KN) & (df["sog"] <= FISHING_MAX_KN)
+        (df["sog"] >= STOPPED_KN) & (df["sog"] <= FISHING_MAX_KN)
     ).astype(np.float32)
 
     # Heading (sin/cos encoding)

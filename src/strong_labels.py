@@ -10,9 +10,9 @@ import pandas as pd
 # Config
 # ---------------------------------------------------------------------------
 
-MAX_DIST_KM       = 50.0   # increased from 10km — vessels move away from gear
-MIN_FISHING_RATIO = 0.3    # lowered from 0.5 — easier to qualify as fishing segment
-STRATEGY          = "temporal"  # "temporal" or "spatial"
+MAX_DIST_KM       = 50.0
+MIN_FISHING_RATIO = 0.3
+STRATEGY          = "temporal"
 
 
 # ---------------------------------------------------------------------------

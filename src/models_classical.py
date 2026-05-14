@@ -37,7 +37,7 @@ def make_gb():
         learning_rate=0.05,
         max_depth=4,
         subsample=0.8,
-        min_samples_leaf=10,
+        min_samples_leaf=5,
         random_state=RANDOM_STATE,
     )
 

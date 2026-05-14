@@ -6,7 +6,7 @@ models_nn.py
 import numpy as np
 import torch
 import torch.nn as nn
-from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler
+from torch.utils.data import Dataset, DataLoader
 from sklearn.metrics import average_precision_score
 
 
@@ -159,17 +159,9 @@ def train_nn(
     model = model.to(device)
 
     dataset = FishingDataset(X_train, y_train)
+    loader  = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
-    # Weighted sampler for class imbalance
-    class_counts = np.bincount(y_train.astype(int))
-    sample_weights = (1.0 / (class_counts + 1e-6))[y_train.astype(int)]
-    sampler = WeightedRandomSampler(
-        torch.tensor(sample_weights, dtype=torch.float32),
-        num_samples=len(sample_weights),
-        replacement=True,
-    )
-    loader = DataLoader(dataset, batch_size=batch_size, sampler=sampler)
-
+    # Reweight positive class by the inverse class-frequency ratio
     pos_weight = torch.tensor(
         [(y_train == 0).sum() / max((y_train == 1).sum(), 1)],
         dtype=torch.float32, device=device,

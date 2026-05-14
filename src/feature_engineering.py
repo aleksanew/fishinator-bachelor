@@ -60,7 +60,7 @@ def compute_features(df):
             "min_speed":          float(np.min(speeds)),
             "max_speed":          float(np.max(speeds)),
             "low_speed_fraction": _low_speed_fraction(speeds),
-            "turning_rate":       float(np.mean(np.abs(np.diff(courses)))) if len(courses) > 1 else 0.0,
+            "turning_rate":       float(np.mean(np.abs(((np.diff(courses) + 180) % 360) - 180))) if len(courses) > 1 else 0.0,
             "cog_std":            _cog_std(courses),
             "sinuosity":          _sinuosity(lats, lons),
             "lat":                float(np.mean(lats)),
